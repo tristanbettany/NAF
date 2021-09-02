@@ -1,0 +1,8 @@
+/node_modules
+/vendor
+.env
+.phpunit.result.cache
+.idea
+Thumbs.db
+.DS_Store
+desktop.ini
