@@ -6,6 +6,8 @@ use Dotenv\Dotenv;
 use League\Container\Container;
 use League\Config\Configuration;
 use Infrastructure\Schemas\DataBaseConnection;
+use Whoops\Handler\PrettyPageHandler;
+use Whoops\Run;
 
 final class Kernel
 {
@@ -24,8 +26,17 @@ final class Kernel
 
     public static function boot(): void
     {
+        static::loadErrorHandler();
         static::loadEnv();
         static::loadConfig();
+        static::loadContainer();
+    }
+
+    public static function loadErrorHandler(): void
+    {
+        $errorHandler = new Run();
+        $errorHandler->pushHandler(new PrettyPageHandler());
+        $errorHandler->register();
     }
 
     private static function loadEnv(): void
