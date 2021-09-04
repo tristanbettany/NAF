@@ -15,6 +15,8 @@ final class AppServiceProvider extends AbstractServiceProvider implements Bootab
     public function provides(string $id): bool
     {
         // TODO: Implement provides() method.
+
+        return true;
     }
 
     public function register(): void

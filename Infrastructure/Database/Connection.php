@@ -1,0 +1,35 @@
+<?php
+
+namespace Infrastructure\Database;
+
+use PDO;
+
+final class Connection
+{
+    private PDO $pdo;
+
+    public function __construct(
+        string $host,
+        int $port,
+        string $dbName,
+        string $username,
+        ?string $password = null,
+        string $charset = 'utf8'
+    ){
+        $this->pdo = new PDO(
+            "mysql:host=$host;port=$port;dbName=$dbName;charset=$charset",
+            $username,
+            $password,
+            [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_PERSISTENT => true,
+                PDO::ATTR_EMULATE_PREPARES => false,
+            ]
+        );
+    }
+
+    public function get(): PDO
+    {
+        return $this->pdo;
+    }
+}
