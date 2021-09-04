@@ -32,6 +32,7 @@
             "Presentation\\": "Presentation/",
             "Application\\": "Application/",
             "Domain\\": "Domain/",
+            "Database\\": "Database/",
             "Infrastructure\\": "Infrastructure/"
         },
         "files": [

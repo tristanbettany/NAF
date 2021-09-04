@@ -3,7 +3,6 @@
 namespace Infrastructure\Core;
 
 use Dotenv\Dotenv;
-use Infrastructure\Database\Connection;
 use Infrastructure\Schemas\Container;
 use League\Container\Argument\Literal\IntegerArgument;
 use League\Container\Argument\Literal\StringArgument;
