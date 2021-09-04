@@ -3,6 +3,7 @@
 namespace Infrastructure\Core;
 
 use Dotenv\Dotenv;
+use Infrastructure\Interfaces\ConnectionInterface;
 use Infrastructure\Schemas\Container;
 use League\Container\Argument\Literal\IntegerArgument;
 use League\Container\Argument\Literal\StringArgument;
@@ -30,7 +31,7 @@ final class Kernel
         return static::$container;
     }
 
-    public static function getConnection(): Connection
+    public static function getConnection(): ConnectionInterface
     {
         return static::$container->get(Connection::class);
     }
@@ -76,10 +77,6 @@ final class Kernel
     {
         static::$container = new LeaugeContainer();
 
-        foreach(static::$config->get('container.bindings') as $interface => $concrete) {
-            static::$container->add($interface, $concrete);
-        }
-
         foreach(static::$config->get('container.service_providers') as $serviceProvider) {
             static::$container->addServiceProvider(new $serviceProvider());
         }
@@ -87,7 +84,7 @@ final class Kernel
 
     private static function loadDatabase(): void
     {
-        static::$container->add(Connection::class)->addArguments([
+        static::$container->add(ConnectionInterface::class, Connection::class)->addArguments([
             new StringArgument(
                 static::$config->get('database.host')
             ),

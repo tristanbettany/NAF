@@ -1,10 +1,11 @@
 <?php
 
-use \Domain\ServiceProviders\AppServiceProvider;
+use Domain\ServiceProviders\AppServiceProvider;
+use Domain\ServiceProviders\SetServiceProvider;
 
 return [
-    'bindings' => [],
     'service_providers' => [
-        AppServiceProvider::class
+        AppServiceProvider::class,
+        SetServiceProvider::class
     ],
 ];

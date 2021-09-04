@@ -2,9 +2,10 @@
 
 namespace Infrastructure\Core;
 
+use Infrastructure\Interfaces\ConnectionInterface;
 use PDO;
 
-final class Connection
+final class Connection implements ConnectionInterface
 {
     private PDO $pdo;
 
@@ -17,7 +18,7 @@ final class Connection
         string $charset = 'utf8'
     ){
         $this->pdo = new PDO(
-            "mysql:host=$host;port=$port;dbName=$dbName;charset=$charset",
+            "mysql:host=$host;port=$port;dbname=$dbName;charset=$charset",
             $username,
             $password,
             [
