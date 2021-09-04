@@ -29,10 +29,16 @@ final class Kernel
 
     public static function boot(): void
     {
-        static::loadErrorHandler();
         static::loadEnv();
+        static::loadErrorHandler();
         static::loadConfig();
         static::loadContainer();
+    }
+
+    private static function loadEnv(): void
+    {
+        $dotenv = Dotenv::createImmutable(__DIR__ . '/../..');
+        $dotenv->safeLoad();
     }
 
     public static function loadErrorHandler(): void
@@ -43,12 +49,6 @@ final class Kernel
             $errorHandler->pushHandler(new JsonResponseHandler());
         }
         $errorHandler->register();
-    }
-
-    private static function loadEnv(): void
-    {
-        $dotenv = Dotenv::createImmutable(__DIR__ . '/../..');
-        $dotenv->safeLoad();
     }
 
     private static function loadConfig(): void
