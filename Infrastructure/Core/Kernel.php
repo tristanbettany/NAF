@@ -7,9 +7,10 @@ use Infrastructure\Schemas\Container;
 use League\Container\Container as LeaugeContainer;
 use League\Config\Configuration;
 use Infrastructure\Schemas\DataBaseConnection;
-use phpDocumentor\Reflection\Types\Static_;
+use Whoops\Handler\JsonResponseHandler;
 use Whoops\Handler\PrettyPageHandler;
 use Whoops\Run;
+use Whoops\Util\Misc;
 
 final class Kernel
 {
@@ -38,6 +39,9 @@ final class Kernel
     {
         $errorHandler = new Run();
         $errorHandler->pushHandler(new PrettyPageHandler());
+        if (Misc::isAjaxRequest() === true) {
+            $errorHandler->pushHandler(new JsonResponseHandler());
+        }
         $errorHandler->register();
     }
 
