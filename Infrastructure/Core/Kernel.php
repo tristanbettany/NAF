@@ -5,12 +5,18 @@ namespace Infrastructure\Core;
 use Dotenv\Dotenv;
 use Infrastructure\Interfaces\ConnectionInterface;
 use Infrastructure\Schemas\Container;
+use Infrastructure\Schemas\Routes;
+use Laminas\Diactoros\ServerRequestFactory;
+use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
 use League\Container\Argument\Literal\IntegerArgument;
 use League\Container\Argument\Literal\StringArgument;
 use League\Container\Argument\LiteralArgument;
 use League\Container\Container as LeaugeContainer;
 use League\Config\Configuration;
 use Infrastructure\Schemas\Database;
+use League\Route\Router;
+use League\Route\Strategy\ApplicationStrategy;
+use League\Route\Strategy\StrategyAwareInterface;
 use Whoops\Handler\JsonResponseHandler;
 use Whoops\Handler\PrettyPageHandler;
 use Whoops\Run;
@@ -20,6 +26,7 @@ final class Kernel
 {
     private static LeaugeContainer $container;
     private static Configuration $config;
+    private static StrategyAwareInterface $router;
 
     public static function getConfig(): Configuration
     {
@@ -42,7 +49,9 @@ final class Kernel
         static::loadErrorHandler();
         static::loadConfig();
         static::loadContainer();
+        static::loadRouting();
         static::loadDatabase();
+        static::dispatch();
     }
 
     private static function loadEnv(): void
@@ -66,10 +75,12 @@ final class Kernel
         static::$config = new Configuration([
             'database' => Database::define(),
             'container' => Container::define(),
+            'routes' => Routes::define(),
         ]);
         static::$config->merge([
             'database' => Database::values(),
             'container' => Container::values(),
+            'routes' => Routes::values(),
         ]);
     }
 
@@ -79,6 +90,32 @@ final class Kernel
 
         foreach(static::$config->get('container.service_providers') as $serviceProvider) {
             static::$container->addServiceProvider(new $serviceProvider());
+        }
+
+        foreach(static::$config->get('container.actions') as $action => $arguments) {
+            static::$container->add($action)
+                ->addArguments($arguments);
+        }
+    }
+
+    private static function loadRouting(): void
+    {
+        $strategy = (new ApplicationStrategy)->setContainer(static::$container);
+        static::$router = (new Router())->setStrategy($strategy);
+
+        foreach (static::$config->get('routes') as $route) {
+            foreach ($route['methods'] as $method) {
+                $middlewares = [];
+                foreach ($route['middleware'] as $middleware) {
+                    $middlewares[] = new $middleware;
+                }
+
+                static::$router->map(
+                    $method,
+                    $route['uri'],
+                    $route['action']
+                )->middlewares($middlewares);
+            }
         }
     }
 
@@ -104,5 +141,20 @@ final class Kernel
                 static::$config->get('database.charset')
             ),
         ]);
+    }
+
+    private static function dispatch(): void
+    {
+        $request = ServerRequestFactory::fromGlobals(
+            $_SERVER,
+            $_GET,
+            $_POST,
+            $_COOKIE,
+            $_FILES
+        );
+
+        $response = static::$router->dispatch($request);
+
+        (new SapiEmitter())->emit($response);
     }
 }

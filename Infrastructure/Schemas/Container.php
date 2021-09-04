@@ -10,6 +10,7 @@ final class Container
     public static function define(): Schema
     {
         return Expect::structure([
+            'actions' => Expect::array()->required(),
             'service_providers' => Expect::array()->required(),
         ]);
     }
