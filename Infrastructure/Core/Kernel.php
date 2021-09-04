@@ -3,15 +3,17 @@
 namespace Infrastructure\Core;
 
 use Dotenv\Dotenv;
-use League\Container\Container;
+use Infrastructure\Schemas\Container;
+use League\Container\Container as LeaugeContainer;
 use League\Config\Configuration;
 use Infrastructure\Schemas\DataBaseConnection;
+use phpDocumentor\Reflection\Types\Static_;
 use Whoops\Handler\PrettyPageHandler;
 use Whoops\Run;
 
 final class Kernel
 {
-    private static Container $container;
+    private static LeaugeContainer $container;
     private static Configuration $config;
 
     public static function getConfig(): Configuration
@@ -19,7 +21,7 @@ final class Kernel
         return static::$config;
     }
 
-    public static function getContainer(): Container
+    public static function getContainer(): LeaugeContainer
     {
         return static::$container;
     }
@@ -49,14 +51,24 @@ final class Kernel
     {
         static::$config = new Configuration([
             'database' => DataBaseConnection::define(),
+            'container' => Container::define(),
         ]);
         static::$config->merge([
             'database' => DataBaseConnection::values(),
+            'container' => Container::values(),
         ]);
     }
 
     private static function loadContainer(): void
     {
-        static::$container = new Container();
+        static::$container = new LeaugeContainer();
+
+        foreach(static::$config->get('container.bindings') as $interface => $concrete) {
+            static::$container->add($interface, $concrete);
+        }
+
+        foreach(static::$config->get('container.service_providers') as $serviceProvider) {
+            static::$container->addServiceProvider(new $serviceProvider());
+        }
     }
 }
