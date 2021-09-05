@@ -7,7 +7,7 @@ use Laminas\Diactoros\Response\HtmlResponse;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
-final class TemplateResponse extends HtmlResponse
+final class TwigTemplateResponse extends HtmlResponse
 {
     public function __construct(
         string $templateName,
