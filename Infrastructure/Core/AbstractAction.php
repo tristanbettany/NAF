@@ -1,6 +1,6 @@
 <?php
 
-namespace Application\Actions;
+namespace Infrastructure\Core;
 
 use Application\Exceptions\MethodNotAllowedException;
 use Psr\Http\Message\ResponseInterface;

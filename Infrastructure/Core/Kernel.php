@@ -6,6 +6,7 @@ use Dotenv\Dotenv;
 use Infrastructure\Interfaces\ConnectionInterface;
 use Infrastructure\Schemas\Container;
 use Infrastructure\Schemas\Routes;
+use Infrastructure\Schemas\Twig;
 use Laminas\Diactoros\ServerRequestFactory;
 use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
 use League\Container\Argument\Literal\IntegerArgument;
@@ -76,11 +77,13 @@ final class Kernel
             'database' => Database::define(),
             'container' => Container::define(),
             'routes' => Routes::define(),
+            'twig' => Twig::define(),
         ]);
         static::$config->merge([
             'database' => Database::values(),
             'container' => Container::values(),
             'routes' => Routes::values(),
+            'twig' => Twig::values(),
         ]);
     }
 
