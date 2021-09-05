@@ -1,6 +1,6 @@
 <?php
 
-namespace Infrastructure\Core;
+namespace Presentation\Responses;
 
 use Infrastructure\Facades\Config;
 use Laminas\Diactoros\Response\HtmlResponse;

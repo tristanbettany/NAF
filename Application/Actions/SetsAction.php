@@ -4,7 +4,7 @@ namespace Application\Actions;
 
 use Domain\Interfaces\SetServiceInterface;
 use Infrastructure\Core\AbstractAction;
-use Infrastructure\Core\TwigTemplateResponse;
+use Presentation\Responses\TwigTemplateResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
