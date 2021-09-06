@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * This file is custom configuration for the doctrine-migrations
+ * package. It does not handle any other CLI commands. That would be
+ * handled by the cli method in the Kernel
+ */
+
 require_once __DIR__ . '/vendor/autoload.php';
 
 use Doctrine\DBAL\DriverManager;
