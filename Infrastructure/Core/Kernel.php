@@ -4,6 +4,7 @@ namespace Infrastructure\Core;
 
 use Dotenv\Dotenv;
 use Infrastructure\Interfaces\ConnectionInterface;
+use Infrastructure\Schemas\Commands;
 use Infrastructure\Schemas\Container;
 use Infrastructure\Schemas\Routes;
 use Infrastructure\Schemas\Twig;
@@ -18,7 +19,9 @@ use Infrastructure\Schemas\Database;
 use League\Route\Router;
 use League\Route\Strategy\ApplicationStrategy;
 use League\Route\Strategy\StrategyAwareInterface;
+use Symfony\Component\Console\Application;
 use Whoops\Handler\JsonResponseHandler;
+use Whoops\Handler\PlainTextHandler;
 use Whoops\Handler\PrettyPageHandler;
 use Whoops\Run;
 use Whoops\Util\Misc;
@@ -55,7 +58,17 @@ final class Kernel
         static::dispatch();
     }
 
-    private static function loadEnv(): void
+    public static function bootCli(): void
+    {
+        static::loadEnv();
+        static::loadErrorHandler();
+        static::loadConfig();
+        static::loadContainer();
+        static::loadDatabase();
+        static::cli();
+    }
+
+    public static function loadEnv(): void
     {
         $dotenv = Dotenv::createImmutable(__DIR__ . '/../..');
         $dotenv->safeLoad();
@@ -64,30 +77,38 @@ final class Kernel
     public static function loadErrorHandler(): void
     {
         $errorHandler = new Run();
-        $errorHandler->pushHandler(new PrettyPageHandler());
-        if (Misc::isAjaxRequest() === true) {
-            $errorHandler->pushHandler(new JsonResponseHandler());
+        if (Misc::isCommandLine() === false) {
+            $errorHandler->pushHandler(new PrettyPageHandler());
+
+            if (Misc::isAjaxRequest() === true) {
+                $errorHandler->pushHandler(new JsonResponseHandler());
+            }
+        } else {
+            $errorHandler->pushHandler(new PlainTextHandler());
         }
+
         $errorHandler->register();
     }
 
-    private static function loadConfig(): void
+    public static function loadConfig(): void
     {
         static::$config = new Configuration([
             'database' => Database::define(),
             'container' => Container::define(),
             'routes' => Routes::define(),
             'twig' => Twig::define(),
+            'commands' => Commands::define(),
         ]);
         static::$config->merge([
             'database' => Database::values(),
             'container' => Container::values(),
             'routes' => Routes::values(),
             'twig' => Twig::values(),
+            'commands' => Commands::values(),
         ]);
     }
 
-    private static function loadContainer(): void
+    public static function loadContainer(): void
     {
         static::$container = new LeaugeContainer();
 
@@ -101,7 +122,7 @@ final class Kernel
         }
     }
 
-    private static function loadRouting(): void
+    public static function loadRouting(): void
     {
         $strategy = (new ApplicationStrategy)->setContainer(static::$container);
         static::$router = (new Router())->setStrategy($strategy);
@@ -122,31 +143,31 @@ final class Kernel
         }
     }
 
-    private static function loadDatabase(): void
+    public static function loadDatabase(): void
     {
         static::$container->add(ConnectionInterface::class, Connection::class)->addArguments([
             new StringArgument(
-                static::$config->get('database.host')
+                static::$config->get('database.connection.host')
             ),
             new IntegerArgument(
-                static::$config->get('database.port')
+                static::$config->get('database.connection.port')
             ),
             new StringArgument(
-                static::$config->get('database.db_name')
+                static::$config->get('database.connection.db_name')
             ),
             new StringArgument(
-                static::$config->get('database.username')
+                static::$config->get('database.connection.username')
             ),
             new LiteralArgument(
-                static::$config->get('database.password')
+                static::$config->get('database.connection.password')
             ),
             new StringArgument(
-                static::$config->get('database.charset')
+                static::$config->get('database.connection.charset')
             ),
         ]);
     }
 
-    private static function dispatch(): void
+    public static function dispatch(): void
     {
         $request = ServerRequestFactory::fromGlobals(
             $_SERVER,
@@ -159,5 +180,15 @@ final class Kernel
         $response = static::$router->dispatch($request);
 
         (new SapiEmitter())->emit($response);
+    }
+
+    public static function cli() :void
+    {
+        $application = new Application();
+        foreach(static::$config->get('commands') as $command) {
+            $application->add(new $command);
+        }
+
+        $application->run();
     }
 }
