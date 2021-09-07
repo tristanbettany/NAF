@@ -49,9 +49,9 @@
     "prefer-stable": true,
     "scripts": {
         "test": "vendor/bin/phpunit",
-        "migrate": "vendor/bin/doctrine-migrations migrate",
-        "migrate-up": "vendor/bin/doctrine-migrations execute --up",
-        "migrate-down": "vendor/bin/doctrine-migrations execute --down",
-        "generate-migration": "vendor/bin/doctrine-migrations generate"
+        "migrate": "./cli migrations:migrate",
+        "migrate-up": "./cli migrations:execute --up",
+        "migrate-down": "./cli migrations:execute --down",
+        "generate-migration": "./cli migrations:generate"
     }
 }

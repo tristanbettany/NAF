@@ -2,6 +2,20 @@
 
 namespace Infrastructure\Core;
 
+use Doctrine\DBAL\DriverManager;
+use Doctrine\Migrations\Configuration\Connection\ExistingConnection;
+use Doctrine\Migrations\Configuration\Migration\ConfigurationArray;
+use Doctrine\Migrations\DependencyFactory;
+use Doctrine\Migrations\Tools\Console\Command\DumpSchemaCommand;
+use Doctrine\Migrations\Tools\Console\Command\ExecuteCommand;
+use Doctrine\Migrations\Tools\Console\Command\GenerateCommand;
+use Doctrine\Migrations\Tools\Console\Command\LatestCommand;
+use Doctrine\Migrations\Tools\Console\Command\ListCommand;
+use Doctrine\Migrations\Tools\Console\Command\MigrateCommand;
+use Doctrine\Migrations\Tools\Console\Command\RollupCommand;
+use Doctrine\Migrations\Tools\Console\Command\StatusCommand;
+use Doctrine\Migrations\Tools\Console\Command\SyncMetadataCommand;
+use Doctrine\Migrations\Tools\Console\Command\VersionCommand;
 use Dotenv\Dotenv;
 use Infrastructure\Interfaces\ConnectionInterface;
 use Infrastructure\Schemas\Commands;
@@ -188,6 +202,38 @@ final class Kernel
         foreach(static::$config->get('commands') as $command) {
             $application->add(new $command);
         }
+
+        /**
+         * Setup Doctrine migrations commands
+         */
+        $connection = DriverManager::getConnection(
+            [
+                'dbname' => static::$config->get('database.connection.db_name'),
+                'user' => static::$config->get('database.connection.username'),
+                'password' => static::$config->get('database.connection.password'),
+                'host' => static::$config->get('database.connection.host'),
+                'driver' => 'pdo_mysql',
+                'memory' => true,
+            ]
+        );
+
+        $dependencyFactory = DependencyFactory::fromConnection(
+            new ConfigurationArray(static::$config->get('database.migrations')),
+            new ExistingConnection($connection)
+        );
+
+        $application->addCommands([
+            new DumpSchemaCommand($dependencyFactory),
+            new ExecuteCommand($dependencyFactory),
+            new GenerateCommand($dependencyFactory),
+            new LatestCommand($dependencyFactory),
+            new ListCommand($dependencyFactory),
+            new MigrateCommand($dependencyFactory),
+            new RollupCommand($dependencyFactory),
+            new StatusCommand($dependencyFactory),
+            new SyncMetadataCommand($dependencyFactory),
+            new VersionCommand($dependencyFactory),
+        ]);
 
         $application->run();
     }
