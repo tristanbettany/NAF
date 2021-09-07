@@ -9,7 +9,7 @@ use Domain\Services\ExampleService;
 use Infrastructure\Interfaces\ConnectionInterface;
 use League\Container\ServiceProvider\AbstractServiceProvider;
 
-final class SetServiceProvider extends AbstractServiceProvider
+final class ExampleServiceProvider extends AbstractServiceProvider
 {
     public function provides(string $id): bool
     {

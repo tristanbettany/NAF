@@ -1,7 +1,7 @@
 <?php
 
 use Domain\ServiceProviders\AppServiceProvider;
-use Domain\ServiceProviders\SetServiceProvider;
+use Domain\ServiceProviders\ExampleServiceProvider;
 use Application\Actions\ExampleAction;
 use Domain\Interfaces\ExampleServiceInterface;
 
@@ -13,6 +13,6 @@ return [
     ],
     'service_providers' => [
         AppServiceProvider::class,
-        SetServiceProvider::class
+        ExampleServiceProvider::class
     ],
 ];
