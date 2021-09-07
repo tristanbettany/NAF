@@ -1,7 +1,7 @@
 {
-    "name": "tristanbettany/ptcg-collection-manager",
+    "name": "tristanbettany/naf",
     "type": "project",
-    "description": "PTCG Collection Manager",
+    "description": "Not A Framework",
     "license": "MIT",
     "authors": [
         {
