@@ -2,10 +2,10 @@
 
 namespace Domain\ServiceProviders;
 
-use Database\Gateways\SetGateway;
-use Database\Interfaces\SetGatewayInterface;
-use Domain\Interfaces\SetServiceInterface;
-use Domain\Services\SetService;
+use Database\Gateways\ExampleGateway;
+use Database\Interfaces\ExampleGatewayInterface;
+use Domain\Interfaces\ExampleServiceInterface;
+use Domain\Services\ExampleService;
 use Infrastructure\Interfaces\ConnectionInterface;
 use League\Container\ServiceProvider\AbstractServiceProvider;
 
@@ -14,7 +14,7 @@ final class SetServiceProvider extends AbstractServiceProvider
     public function provides(string $id): bool
     {
         $services = [
-            SetServiceInterface::class,
+            ExampleServiceInterface::class,
         ];
 
         return in_array($id, $services);
@@ -24,10 +24,10 @@ final class SetServiceProvider extends AbstractServiceProvider
     {
         $container = $this->getContainer();
 
-        $container->add(SetGatewayInterface::class, SetGateway::class)
+        $container->add(ExampleGatewayInterface::class, ExampleGateway::class)
             ->addArgument(ConnectionInterface::class);
 
-        $container->add(SetServiceInterface::class, SetService::class)
-            ->addArgument(SetGatewayInterface::class);
+        $container->add(ExampleServiceInterface::class, ExampleService::class)
+            ->addArgument(ExampleGatewayInterface::class);
     }
 }

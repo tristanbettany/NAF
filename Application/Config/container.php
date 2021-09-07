@@ -2,13 +2,13 @@
 
 use Domain\ServiceProviders\AppServiceProvider;
 use Domain\ServiceProviders\SetServiceProvider;
-use Application\Actions\SetsAction;
-use Domain\Interfaces\SetServiceInterface;
+use Application\Actions\ExampleAction;
+use Domain\Interfaces\ExampleServiceInterface;
 
 return [
     'actions' => [
-        SetsAction::class => [
-            SetServiceInterface::class,
+        ExampleAction::class => [
+            ExampleServiceInterface::class,
         ],
     ],
     'service_providers' => [

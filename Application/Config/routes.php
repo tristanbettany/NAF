@@ -1,11 +1,11 @@
 <?php
 
-use Application\Actions\SetsAction;
+use Application\Actions\ExampleAction;
 
 return [
     'sets' => [
-        'uri' => '/sets',
-        'action' => SetsAction::class,
+        'uri' => '/',
+        'action' => ExampleAction::class,
         'middleware' => [],
         'methods' => ['GET'],
     ],

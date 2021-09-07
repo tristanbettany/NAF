@@ -2,21 +2,21 @@
 
 namespace Application\Actions;
 
-use Domain\Interfaces\SetServiceInterface;
+use Domain\Interfaces\ExampleServiceInterface;
 use Infrastructure\Core\AbstractAction;
 use Presentation\Responses\TwigTemplateResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-final class SetsAction extends AbstractAction
+final class ExampleAction extends AbstractAction
 {
     public function __construct(
-        private SetServiceInterface $setService
+        private ExampleServiceInterface $exampleService
     ){
     }
 
     public function get(ServerRequestInterface $request): ResponseInterface
     {
-        return new TwigTemplateResponse('@Base/sets.html.twig');
+        return new TwigTemplateResponse('@Base/example-view.html.twig');
     }
 }
