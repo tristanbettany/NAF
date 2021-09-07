@@ -5,6 +5,7 @@ namespace Application\Actions;
 use Domain\Interfaces\ExampleServiceInterface;
 use Infrastructure\Core\AbstractAction;
 use Presentation\Responses\TwigTemplateResponse;
+use Presentation\ViewModels\ExampleViewModel;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -17,6 +18,13 @@ final class ExampleAction extends AbstractAction
 
     public function get(ServerRequestInterface $request): ResponseInterface
     {
-        return new TwigTemplateResponse('@Base/example-view.html.twig');
+        $data = $this->exampleService->getExampleData();
+
+        return new TwigTemplateResponse(
+            '@Base/example-view.html.twig',
+            [
+                'viewModel' => new ExampleViewModel($data),
+            ]
+        );
     }
 }

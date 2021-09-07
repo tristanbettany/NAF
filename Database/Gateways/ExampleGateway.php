@@ -9,6 +9,9 @@ final class ExampleGateway extends AbstractGateway implements ExampleGatewayInte
 {
     public function getExampleData(): array
     {
-        return [];
+        return [
+            'id' => 1,
+            'name' => 'example',
+        ];
     }
 }
