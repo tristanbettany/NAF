@@ -15,4 +15,5 @@ return [
         ],
         'all_or_nothing' => true,
     ],
+    'seeds' => [],
 ];

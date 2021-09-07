@@ -33,6 +33,7 @@ final class Database
                 'connection' => Expect::string()->nullable(),
                 'em' => Expect::string()->nullable(),
             ]),
+            'seeds' => Expect::array(),
         ]);
     }
 
