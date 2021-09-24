@@ -20,7 +20,7 @@ if(function_exists('vd') === false) {
 
 if(function_exists('env') === false) {
     function env(string $key) {
-        if (empty($_ENV[$key]) === true) {
+        if (isset($_ENV[$key]) === false) {
             return null;
         }
 
@@ -28,6 +28,15 @@ if(function_exists('env') === false) {
 
         if (is_numeric($value) === true) {
             return (int) $value;
+        }
+
+        if (
+            $value === ''
+            || $value === 'null'
+            || $value === 'NULL'
+            || $value === null
+        ) {
+            return null;
         }
 
         if (
