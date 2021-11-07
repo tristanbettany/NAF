@@ -35,7 +35,7 @@ Point your web server to the index.php file in the Public folder and your ready 
 - Environment variable loading
 - Flip Whoops for error handling
 - League Routing implimentation
-- League Container implimentation for dependancy injection
+- PHP DI Container implimentation for dependancy injection
 - League config implimentation
 - Doctrine migrations implimentation for versioning your database
 - FakerPHP for use in seeds

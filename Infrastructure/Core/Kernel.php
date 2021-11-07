@@ -2,7 +2,7 @@
 
 namespace Infrastructure\Core;
 
-use Doctrine\DBAL\DriverManager;
+use DI\ContainerBuilder;
 use Doctrine\Migrations\Configuration\Connection\ExistingConnection;
 use Doctrine\Migrations\Configuration\Migration\ConfigurationArray;
 use Doctrine\Migrations\DependencyFactory;
@@ -16,23 +16,21 @@ use Doctrine\Migrations\Tools\Console\Command\RollupCommand;
 use Doctrine\Migrations\Tools\Console\Command\StatusCommand;
 use Doctrine\Migrations\Tools\Console\Command\SyncMetadataCommand;
 use Doctrine\Migrations\Tools\Console\Command\VersionCommand;
+use Domain\Interfaces\DefinitionInterface;
 use Dotenv\Dotenv;
-use Infrastructure\Interfaces\ConnectionInterface;
+use Infrastructure\Facades\Connection;
 use Infrastructure\Schemas\Commands;
 use Infrastructure\Schemas\Container;
 use Infrastructure\Schemas\Routes;
 use Infrastructure\Schemas\Twig;
 use Laminas\Diactoros\ServerRequestFactory;
 use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
-use League\Container\Argument\Literal\IntegerArgument;
-use League\Container\Argument\Literal\StringArgument;
-use League\Container\Argument\LiteralArgument;
-use League\Container\Container as LeaugeContainer;
 use League\Config\Configuration;
 use Infrastructure\Schemas\Database;
 use League\Route\Router;
 use League\Route\Strategy\ApplicationStrategy;
 use League\Route\Strategy\StrategyAwareInterface;
+use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Application;
 use Whoops\Handler\JsonResponseHandler;
 use Whoops\Handler\PlainTextHandler;
@@ -42,7 +40,7 @@ use Whoops\Util\Misc;
 
 final class Kernel
 {
-    private static LeaugeContainer $container;
+    private static ContainerInterface $container;
     private static Configuration $config;
     private static StrategyAwareInterface $router;
 
@@ -51,35 +49,23 @@ final class Kernel
         return static::$config;
     }
 
-    public static function getContainer(): LeaugeContainer
+    public static function getContainer(): ContainerInterface
     {
-        return static::$container;
-    }
+        if (empty(static::$container) === true) {
+            static::boot();
+        }
 
-    public static function getConnection(): ConnectionInterface
-    {
-        return static::$container->get(Connection::class);
+        return static::$container;
     }
 
     public static function boot(): void
     {
-        static::loadEnv();
-        static::loadErrorHandler();
-        static::loadConfig();
-        static::loadContainer();
-        static::loadRouting();
-        static::loadDatabase();
-        static::dispatch();
-    }
-
-    public static function bootCli(): void
-    {
-        static::loadEnv();
-        static::loadErrorHandler();
-        static::loadConfig();
-        static::loadContainer();
-        static::loadDatabase();
-        static::cli();
+        if (empty(static::$container) === true) {
+            static::loadEnv();
+            static::loadErrorHandler();
+            static::loadConfig();
+            static::loadContainer();
+        }
     }
 
     public static function loadEnv(): void
@@ -106,34 +92,39 @@ final class Kernel
 
     public static function loadConfig(): void
     {
-        static::$config = new Configuration([
+        $configDefinitions = [
             'database' => Database::define(),
             'container' => Container::define(),
-            'routes' => Routes::define(),
-            'twig' => Twig::define(),
             'commands' => Commands::define(),
-        ]);
-        static::$config->merge([
+            'twig' => Twig::define(),
+            'routes' => Routes::define(),
+        ];
+
+        $configValues = [
             'database' => Database::values(),
             'container' => Container::values(),
-            'routes' => Routes::values(),
-            'twig' => Twig::values(),
             'commands' => Commands::values(),
-        ]);
+            'twig' => Twig::values(),
+            'routes' => Routes::values(),
+        ];
+
+        static::$config = new Configuration($configDefinitions);
+        static::$config->merge($configValues);
     }
 
     public static function loadContainer(): void
     {
-        static::$container = new LeaugeContainer();
+        $definitions = static::$config->get('container.definitions');
 
-        foreach(static::$config->get('container.service_providers') as $serviceProvider) {
-            static::$container->addServiceProvider(new $serviceProvider());
+        $containerBuilder = new ContainerBuilder();
+
+        foreach ($definitions as $definition) {
+            /** @var DefinitionInterface $class */
+            $class = new $definition();
+            $containerBuilder->addDefinitions($class->define());
         }
 
-        foreach(static::$config->get('container.actions') as $action => $arguments) {
-            static::$container->add($action)
-                ->addArguments($arguments);
-        }
+        static::$container = $containerBuilder->build();
     }
 
     public static function loadRouting(): void
@@ -157,31 +148,7 @@ final class Kernel
         }
     }
 
-    public static function loadDatabase(): void
-    {
-        static::$container->add(ConnectionInterface::class, Connection::class)->addArguments([
-            new StringArgument(
-                static::$config->get('database.connection.host')
-            ),
-            new IntegerArgument(
-                static::$config->get('database.connection.port')
-            ),
-            new StringArgument(
-                static::$config->get('database.connection.db_name')
-            ),
-            new StringArgument(
-                static::$config->get('database.connection.username')
-            ),
-            new LiteralArgument(
-                static::$config->get('database.connection.password')
-            ),
-            new StringArgument(
-                static::$config->get('database.connection.charset')
-            ),
-        ]);
-    }
-
-    public static function dispatch(): void
+    public static function dispatchToAction(): void
     {
         $request = ServerRequestFactory::fromGlobals(
             $_SERVER,
@@ -203,23 +170,9 @@ final class Kernel
             $application->add(new $command);
         }
 
-        /**
-         * Setup Doctrine migrations commands
-         */
-        $connection = DriverManager::getConnection(
-            [
-                'dbname' => static::$config->get('database.connection.db_name'),
-                'user' => static::$config->get('database.connection.username'),
-                'password' => static::$config->get('database.connection.password'),
-                'host' => static::$config->get('database.connection.host'),
-                'driver' => 'pdo_mysql',
-                'memory' => true,
-            ]
-        );
-
         $dependencyFactory = DependencyFactory::fromConnection(
             new ConfigurationArray(static::$config->get('database.migrations')),
-            new ExistingConnection($connection)
+            new ExistingConnection(Connection::instance())
         );
 
         $application->addCommands([

@@ -3,7 +3,6 @@
 namespace Application\Actions;
 
 use Domain\Interfaces\ExampleServiceInterface;
-use Infrastructure\Core\AbstractAction;
 use Presentation\Responses\TwigTemplateResponse;
 use Presentation\ViewModels\ExampleViewModel;
 use Psr\Http\Message\ResponseInterface;

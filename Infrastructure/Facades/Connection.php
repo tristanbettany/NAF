@@ -2,15 +2,20 @@
 
 namespace Infrastructure\Facades;
 
-use Infrastructure\Core\Kernel;
+use Doctrine\DBAL\Connection as DoctrineConnection;
 
 final class Connection
 {
+    public static function instance(): DoctrineConnection
+    {
+        return Container::get(DoctrineConnection::class);
+    }
+
     public static function __callStatic(
         string $methodName,
         array $arguments
     ): mixed {
-        return Kernel::getConnection()
+        return Container::get(DoctrineConnection::class)
             ->$methodName(...$arguments);
     }
 }

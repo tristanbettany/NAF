@@ -21,4 +21,5 @@ echo '
                                   
 ';
 
-Kernel::bootCli();
+Kernel::boot();
+Kernel::cli();

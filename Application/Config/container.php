@@ -1,18 +1,11 @@
 <?php
 
-use Domain\ServiceProviders\AppServiceProvider;
-use Domain\ServiceProviders\ExampleServiceProvider;
-use Application\Actions\ExampleAction;
-use Domain\Interfaces\ExampleServiceInterface;
+use Domain\Definitions\AppDefinition;
+use Domain\Definitions\ExampleServiceDefinition;
 
 return [
-    'actions' => [
-        ExampleAction::class => [
-            ExampleServiceInterface::class,
-        ],
-    ],
-    'service_providers' => [
-        AppServiceProvider::class,
-        ExampleServiceProvider::class
+    'definitions' => [
+        AppDefinition::class,
+        ExampleServiceDefinition::class,
     ],
 ];
