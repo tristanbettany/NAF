@@ -2,6 +2,7 @@
 
 namespace Infrastructure\Core;
 
+use Application\ExceptionHandlers\SentryExceptionHandler;
 use DI\ContainerBuilder;
 use Doctrine\Migrations\Configuration\Connection\ExistingConnection;
 use Doctrine\Migrations\Configuration\Migration\ConfigurationArray;
@@ -37,6 +38,7 @@ use Whoops\Handler\PlainTextHandler;
 use Whoops\Handler\PrettyPageHandler;
 use Whoops\Run;
 use Whoops\Util\Misc;
+use function Sentry\init;
 
 final class Kernel
 {
@@ -76,6 +78,11 @@ final class Kernel
 
     public static function loadErrorHandler(): void
     {
+        init([
+            'dsn' => env('SENTRY_DSN'),
+            'default_integrations' => false,
+        ]);
+
         $errorHandler = new Run();
         if (Misc::isCommandLine() === false) {
             $errorHandler->pushHandler(new PrettyPageHandler());
@@ -87,6 +94,7 @@ final class Kernel
             $errorHandler->pushHandler(new PlainTextHandler());
         }
 
+        $errorHandler->pushHandler(new SentryExceptionHandler());
         $errorHandler->register();
     }
 
