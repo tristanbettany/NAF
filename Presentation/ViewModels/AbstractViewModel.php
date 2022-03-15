@@ -2,14 +2,8 @@
 
 namespace Presentation\ViewModels;
 
-use ArrayObject;
+use Spatie\DataTransferObject\DataTransferObject;
 
-abstract class AbstractViewModel extends ArrayObject
+abstract class AbstractViewModel extends DataTransferObject
 {
-    public function __construct(array $data)
-    {
-        parent::__construct(
-            $data
-        );
-    }
 }

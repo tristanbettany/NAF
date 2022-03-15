@@ -4,13 +4,11 @@ namespace Presentation\ViewModels;
 
 final class ExampleViewModel extends AbstractViewModel
 {
-    public function getId(): int
-    {
-        return $this->offsetGet('id');
-    }
+    public int $id;
+    public string $name;
 
     public function getName(): string
     {
-        return $this->offsetGet('name');
+        return "Got $this->name via the getName() method";
     }
 }

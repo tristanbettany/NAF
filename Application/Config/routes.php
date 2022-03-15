@@ -1,12 +1,12 @@
 <?php
 
-use Application\Actions\ExampleAction;
+use Application\Actions\RootAction;
 use Application\Middleware\ExampleMiddleware;
 
 return [
-    'sets' => [
+    'root' => [
         'uri' => '/',
-        'action' => ExampleAction::class,
+        'action' => RootAction::class,
         'middleware' => [
             ExampleMiddleware::class
         ],

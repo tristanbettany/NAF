@@ -8,7 +8,7 @@ use Presentation\ViewModels\ExampleViewModel;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-final class ExampleAction extends AbstractAction
+final class RootAction extends AbstractAction
 {
     public function __construct(
         private ExampleServiceInterface $exampleService
@@ -20,7 +20,7 @@ final class ExampleAction extends AbstractAction
         $data = $this->exampleService->getExampleData();
 
         return new TwigTemplateResponse(
-            '@Base/example-view.html.twig',
+            '@Base/root.html.twig',
             [
                 'viewModel' => new ExampleViewModel($data),
             ]
