@@ -143,8 +143,10 @@ final class Kernel
         foreach (static::$config->get('routes') as $route) {
             foreach ($route['methods'] as $method) {
                 $middlewares = [];
-                foreach ($route['middleware'] as $middleware) {
-                    $middlewares[] = new $middleware;
+                if (empty($route['middleware']) === false) {
+                    foreach ($route['middleware'] as $middleware) {
+                        $middlewares[] = new $middleware;
+                    }
                 }
 
                 static::$router->map(

@@ -2,9 +2,12 @@
 
 namespace Domain\Definitions;
 
+use Database\Interfaces\UserRepositoryInterface;
+use Database\Repositories\UserRepository;
 use Doctrine\DBAL\Connection as DoctrineConnection;
 use Doctrine\DBAL\DriverManager;
 use Infrastructure\Facades\Config;
+use Infrastructure\Facades\Connection;
 use Psr\Container\ContainerInterface;
 
 final class DatabaseDefinition extends AbstractDefinition
@@ -23,6 +26,9 @@ final class DatabaseDefinition extends AbstractDefinition
                         'memory' => true,
                     ]
                 );
+            },
+            UserRepositoryInterface::class => function (ContainerInterface $container) {
+                return new UserRepository(Connection::instance());
             },
         ];
     }
