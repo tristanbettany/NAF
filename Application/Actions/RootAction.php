@@ -2,22 +2,20 @@
 
 namespace Application\Actions;
 
-use Domain\Interfaces\ExampleServiceInterface;
+use Domain\Interfaces\RootServiceInterface;
 use Presentation\Interfaces\RootResponderInterface;
 use Psr\Http\Message\ResponseInterface;
 
 final class RootAction extends AbstractAction
 {
     public function __construct(
-        private ExampleServiceInterface $exampleService,
+        private RootServiceInterface $rootService,
         private RootResponderInterface $responder
     ) {
     }
 
     public function get(): ResponseInterface
     {
-        $data = $this->exampleService->getExampleData();
-
-        return $this->respond($data, $this->responder);
+        return $this->respond([], $this->responder);
     }
 }

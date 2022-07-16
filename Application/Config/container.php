@@ -1,11 +1,13 @@
 <?php
 
-use Domain\Definitions\AppDefinition;
-use Domain\Definitions\ExampleServiceDefinition;
+use Domain\Definitions\DatabaseDefinition;
+use Domain\Definitions\RespondersDefinition;
+use Domain\Definitions\RootServiceDefinition;
 
 return [
     'definitions' => [
-        AppDefinition::class,
-        ExampleServiceDefinition::class,
+        DatabaseDefinition::class,
+        RespondersDefinition::class,
+        RootServiceDefinition::class,
     ],
 ];
