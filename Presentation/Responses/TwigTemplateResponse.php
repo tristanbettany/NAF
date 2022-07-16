@@ -10,22 +10,20 @@ use Twig\Loader\FilesystemLoader;
 final class TwigTemplateResponse extends HtmlResponse
 {
     public function __construct(
-        string $templateName,
-        array $payload = [],
-        int $status = 200,
-        array $headers = []
+        private string $templateName = '@Base/root.html.twig',
+        private array $payload = [],
+        private int $httpStatusCode = 200,
+        private array $httpHeaders = []
     ) {
         parent::__construct(
-            $this->renderTemplate($templateName, $payload),
-            $status,
-            $headers
+            $this->renderTemplate(),
+            $this->httpStatusCode,
+            $this->httpHeaders
         );
     }
 
-    private function renderTemplate(
-        string $templateName,
-        array $payload = []
-    ): string {
+    private function renderTemplate(): string
+    {
         $twigConfig = Config::get('twig');
         $twigLoader = new FilesystemLoader();
 
@@ -43,8 +41,8 @@ final class TwigTemplateResponse extends HtmlResponse
         }
 
         return $twigEnv->render(
-            $templateName,
-            $payload
+            $this->templateName,
+            $this->payload
         );
     }
 }

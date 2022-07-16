@@ -5,6 +5,7 @@ namespace Domain\Definitions;
 use Database\Interfaces\ExampleGatewayInterface;
 use Domain\Interfaces\ExampleServiceInterface;
 use Domain\Services\ExampleService;
+use Presentation\Interfaces\RootResponderInterface;
 use Psr\Container\ContainerInterface;
 
 final class ExampleServiceDefinition extends AbstractDefinition

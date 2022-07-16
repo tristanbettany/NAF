@@ -2,7 +2,7 @@
 
 namespace Presentation\ViewModels;
 
-final class ExampleViewModel extends AbstractViewModel
+final class RootViewModel extends AbstractViewModel
 {
     public int $id;
     public string $name;

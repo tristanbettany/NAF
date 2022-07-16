@@ -8,7 +8,10 @@ use Doctrine\DBAL\Connection as DoctrineConnection;
 use Doctrine\DBAL\DriverManager;
 use Infrastructure\Facades\Config;
 use Infrastructure\Facades\Connection;
+use Presentation\Interfaces\RootResponderInterface;
+use Presentation\Responders\RootResponder;
 use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 final class AppDefinition extends AbstractDefinition
 {
@@ -29,6 +32,9 @@ final class AppDefinition extends AbstractDefinition
             },
             ExampleGatewayInterface::class => function (ContainerInterface $container) {
                 return new ExampleGateway(Connection::instance());
+            },
+            RootResponderInterface::class => function (ContainerInterface $container) {
+                return new RootResponder();
             },
         ];
     }
