@@ -26,9 +26,9 @@ abstract class AbstractAction implements ActionInterface
     }
 
     protected function respond(
-        mixed $data,
-        ResponderInterface $responder
+        ResponderInterface $responder,
+        mixed $data = null
     ): ResponseInterface {
-        return $responder($data, $this->request);
+        return $responder($this->request, $data);
     }
 }

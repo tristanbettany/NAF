@@ -3,11 +3,11 @@
 namespace Presentation\Responders;
 
 use Laminas\Diactoros\Response\RedirectResponse;
-use Presentation\Interfaces\RootResponderInterface;
+use Presentation\Interfaces\LogoutResponderInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-final class RootResponder implements RootResponderInterface
+final class LogoutResponder implements LogoutResponderInterface
 {
     public function __invoke(
         ServerRequestInterface $request,

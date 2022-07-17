@@ -1,7 +1,10 @@
 <?php
 
 use Application\Actions\RootAction;
-use Application\Middleware\AuthMiddleware;
+use Application\Actions\LoginAction;
+use Application\Actions\LogoutAction;
+use Application\Actions\DashboardAction;
+use Application\Middleware\FirewallMiddleware;
 
 return [
     'root' => [
@@ -11,22 +14,25 @@ return [
     ],
     'login' => [
         'uri' => '/login',
-        'action' => RootAction::class,
-        'methods' => ['GET'],
+        'action' => LoginAction::class,
+        'middleware' => [
+            FirewallMiddleware::class
+        ],
+        'methods' => ['GET', 'POST'],
     ],
     'logout' => [
         'uri' => '/logout',
-        'action' => RootAction::class,
+        'action' => LogoutAction::class,
         'middleware' => [
-            AuthMiddleware::class
+            FirewallMiddleware::class
         ],
         'methods' => ['GET'],
     ],
     'dashboard' => [
         'uri' => '/dashboard',
-        'action' => RootAction::class,
+        'action' => DashboardAction::class,
         'middleware' => [
-            AuthMiddleware::class
+            FirewallMiddleware::class
         ],
         'methods' => ['GET'],
     ],

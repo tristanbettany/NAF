@@ -9,7 +9,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
-final class AuthMiddleware implements MiddlewareInterface
+final class FirewallMiddleware implements MiddlewareInterface
 {
     public function process(
         ServerRequestInterface $request,
