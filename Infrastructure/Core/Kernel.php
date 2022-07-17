@@ -6,6 +6,7 @@ use Application\Config\Schemas\Commands;
 use Application\Config\Schemas\Container;
 use Application\Config\Schemas\Database;
 use Application\Config\Schemas\Routes;
+use Application\Config\Schemas\Session;
 use Application\Config\Schemas\Twig;
 use Application\ExceptionHandlers\SentryExceptionHandler;
 use DI\ContainerBuilder;
@@ -106,6 +107,7 @@ final class Kernel
             'commands' => Commands::define(),
             'twig' => Twig::define(),
             'routes' => Routes::define(),
+            'session' => Session::define(),
         ];
 
         $configValues = [
@@ -114,6 +116,7 @@ final class Kernel
             'commands' => Commands::values(),
             'twig' => Twig::values(),
             'routes' => Routes::values(),
+            'session' => Session::values(),
         ];
 
         static::$config = new Configuration($configDefinitions);
