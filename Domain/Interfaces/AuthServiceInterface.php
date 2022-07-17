@@ -4,6 +4,6 @@ namespace Domain\Interfaces;
 
 use Infrastructure\Interfaces\ServiceInterface;
 
-interface RootServiceInterface extends ServiceInterface
+interface AuthServiceInterface extends ServiceInterface
 {
 }
