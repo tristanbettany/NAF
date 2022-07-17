@@ -2,7 +2,8 @@
 
 namespace Database\Seeds;
 
-use Database\Interfaces\SeedInterface;
+use Infrastructure\Abstractions\AbstractSeed;
+use Infrastructure\Interfaces\SeedInterface;
 
 final class UserSeed extends AbstractSeed implements SeedInterface
 {
@@ -13,11 +14,9 @@ final class UserSeed extends AbstractSeed implements SeedInterface
             ->setValue('name', '?')
             ->setValue('email', '?')
             ->setValue('password', '?')
-            ->setValue('sso_id', '?')
             ->setParameter('0', 'Test User')
             ->setParameter('1', 'test@test.com')
             ->setParameter('2', 'test')
-            ->setParameter('3', '12345')
             ->executeQuery();
     }
 }

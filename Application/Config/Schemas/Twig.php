@@ -1,6 +1,6 @@
 <?php
 
-namespace Infrastructure\Schemas;
+namespace Application\Config\Schemas;
 
 use Nette\Schema\Expect;
 use Nette\Schema\Schema;
@@ -18,6 +18,6 @@ final class Twig
 
     public static function values(): array
     {
-        return include_once __DIR__ . '/../../Application/Config/twig.php';
+        return include_once __DIR__ . '/../twig.php';
     }
 }

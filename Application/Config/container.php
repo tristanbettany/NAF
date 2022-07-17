@@ -1,8 +1,8 @@
 <?php
 
-use Domain\Definitions\DatabaseDefinition;
-use Domain\Definitions\RespondersDefinition;
+use Database\Definitions\DatabaseDefinition;
 use Domain\Definitions\RootServiceDefinition;
+use Presentation\Definitions\RespondersDefinition;
 
 return [
     'definitions' => [

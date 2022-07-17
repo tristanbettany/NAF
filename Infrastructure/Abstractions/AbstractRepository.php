@@ -1,9 +1,9 @@
 <?php
 
-namespace Database\Repositories;
+namespace Infrastructure\Abstractions;
 
-use Database\Interfaces\RepositoryInterface;
 use Doctrine\DBAL\Connection as DoctrineConnection;
+use Infrastructure\Interfaces\RepositoryInterface;
 
 abstract class AbstractRepository implements RepositoryInterface
 {

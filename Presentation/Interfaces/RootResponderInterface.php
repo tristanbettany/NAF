@@ -2,6 +2,7 @@
 
 namespace Presentation\Interfaces;
 
+use Infrastructure\Interfaces\ResponderInterface;
 use Presentation\Responses\TwigTemplateResponse;
 use Psr\Http\Message\ServerRequestInterface;
 

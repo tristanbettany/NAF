@@ -1,11 +1,12 @@
 <?php
 
-namespace Domain\Definitions;
+namespace Database\Definitions;
 
 use Database\Interfaces\UserRepositoryInterface;
 use Database\Repositories\UserRepository;
 use Doctrine\DBAL\Connection as DoctrineConnection;
 use Doctrine\DBAL\DriverManager;
+use Infrastructure\Abstractions\AbstractDefinition;
 use Infrastructure\Facades\Config;
 use Infrastructure\Facades\Connection;
 use Psr\Container\ContainerInterface;

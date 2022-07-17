@@ -3,6 +3,7 @@
 namespace Application\Actions;
 
 use Domain\Interfaces\RootServiceInterface;
+use Infrastructure\Abstractions\AbstractAction;
 use Presentation\Interfaces\RootResponderInterface;
 use Psr\Http\Message\ResponseInterface;
 

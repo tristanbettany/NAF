@@ -1,13 +1,14 @@
 <?php
 
-namespace Application\Actions;
+namespace Infrastructure\Abstractions;
 
 use Application\Exceptions\MethodNotAllowedException;
-use Presentation\Interfaces\ResponderInterface;
+use Infrastructure\Interfaces\ActionInterface;
+use Infrastructure\Interfaces\ResponderInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-abstract class AbstractAction
+abstract class AbstractAction implements ActionInterface
 {
     protected ServerRequestInterface $request;
 

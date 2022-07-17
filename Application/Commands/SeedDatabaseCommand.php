@@ -2,9 +2,9 @@
 
 namespace Application\Commands;
 
-use Database\Interfaces\SeedInterface;
 use Infrastructure\Facades\Config;
 use Infrastructure\Facades\Connection;
+use Infrastructure\Interfaces\SeedInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;

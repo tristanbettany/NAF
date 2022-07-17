@@ -1,6 +1,6 @@
 <?php
 
-namespace Presentation\Interfaces;
+namespace Infrastructure\Interfaces;
 
 interface ResponderInterface
 {

@@ -2,6 +2,11 @@
 
 namespace Infrastructure\Core;
 
+use Application\Config\Schemas\Commands;
+use Application\Config\Schemas\Container;
+use Application\Config\Schemas\Database;
+use Application\Config\Schemas\Routes;
+use Application\Config\Schemas\Twig;
 use Application\ExceptionHandlers\SentryExceptionHandler;
 use DI\ContainerBuilder;
 use Doctrine\Migrations\Configuration\Connection\ExistingConnection;
@@ -17,17 +22,12 @@ use Doctrine\Migrations\Tools\Console\Command\RollupCommand;
 use Doctrine\Migrations\Tools\Console\Command\StatusCommand;
 use Doctrine\Migrations\Tools\Console\Command\SyncMetadataCommand;
 use Doctrine\Migrations\Tools\Console\Command\VersionCommand;
-use Domain\Interfaces\DefinitionInterface;
 use Dotenv\Dotenv;
 use Infrastructure\Facades\Connection;
-use Infrastructure\Schemas\Commands;
-use Infrastructure\Schemas\Container;
-use Infrastructure\Schemas\Routes;
-use Infrastructure\Schemas\Twig;
+use Infrastructure\Interfaces\DefinitionInterface;
 use Laminas\Diactoros\ServerRequestFactory;
 use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
 use League\Config\Configuration;
-use Infrastructure\Schemas\Database;
 use League\Route\Router;
 use League\Route\Strategy\ApplicationStrategy;
 use League\Route\Strategy\StrategyAwareInterface;

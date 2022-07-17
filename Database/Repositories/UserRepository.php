@@ -3,6 +3,7 @@
 namespace Database\Repositories;
 
 use Database\Interfaces\UserRepositoryInterface;
+use Infrastructure\Abstractions\AbstractRepository;
 
 final class UserRepository extends AbstractRepository implements UserRepositoryInterface
 {

@@ -1,7 +1,8 @@
 <?php
 
-namespace Domain\Definitions;
+namespace Presentation\Definitions;
 
+use Infrastructure\Abstractions\AbstractDefinition;
 use Presentation\Interfaces\RootResponderInterface;
 use Presentation\Responders\RootResponder;
 use Psr\Container\ContainerInterface;

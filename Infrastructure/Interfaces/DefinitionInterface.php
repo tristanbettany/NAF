@@ -1,6 +1,6 @@
 <?php
 
-namespace Domain\Interfaces;
+namespace Infrastructure\Interfaces;
 
 interface DefinitionInterface
 {
