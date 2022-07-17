@@ -1,1 +1,8 @@
-Dashboard <a href="/logout">Logout</a>
+{% extends '@Base/Layouts/dashboard_layout.html.twig' %}
+
+{% block body %}
+    <div class="mt-50px">
+        <h1 class="text-40px mb-20px">NAF Dashboard</h1>
+        <a href="/logout" class="bg-sky-500 px-20px py-9px text-white">Logout</a>
+    </div>
+{% endblock %}

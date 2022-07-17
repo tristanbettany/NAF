@@ -1,5 +1,12 @@
-<form action="/login" method="post">
-    <input name="email" type="text" placeholder="Email" />
-    <input name="password" type="password" placeholder="Password" />
-    <input type="submit" value="Login" />
-</form>
+{% extends '@Base/Layouts/dashboard_layout.html.twig' %}
+
+{% block body %}
+    <div class="mt-50px">
+        <h1 class="text-40px">NAF Login</h1>
+        <form action="/login" method="post" class="mt-20px">
+            <input name="email" type="text" placeholder="Email" />
+            <input name="password" type="password" placeholder="Password" />
+            <input type="submit" value="Login" class="bg-sky-500 px-20px py-9px text-white" />
+        </form>
+    </div>
+{% endblock %}
