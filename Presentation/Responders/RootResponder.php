@@ -2,17 +2,15 @@
 
 namespace Presentation\Responders;
 
+use Infrastructure\Abstractions\AbstractResponder;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Presentation\Interfaces\RootResponderInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 
-final class RootResponder implements RootResponderInterface
+final class RootResponder extends AbstractResponder implements RootResponderInterface
 {
-    public function __invoke(
-        ServerRequestInterface $request,
-        mixed $data = null
-    ): ResponseInterface {
+    public function get(mixed $data = null): ResponseInterface
+    {
         return new RedirectResponse('/login');
     }
 }
