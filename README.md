@@ -14,31 +14,33 @@
 Designed as a skeleton for creating applications quickly without the constraints and overheads of large frameworks, 
 and without giving you more than what you need. You get the bare bones to make a simple website and can add to that.
 
-The project is designed to be as DDD as possible or at least my interpretation of DDD, please submit an issue if you 
-believe changes or improvements need to be made.
+The project is designed to be as DDD as possible or at least my interpretation of DDD (everyone sees it differently), 
+please submit an issue if you believe changes or improvements need to be made.
 
 ## Setup
 
 To get setup with this skeleton simply clone it and add in your database connection details in the .env file. Run composer install.
-Point your web server to the index.php file in the Public folder and your ready to go. 
+Point your web server to the index.php file in the Public folder, and you're ready to go. 
 
 ## Features
 
-- ADR Design Pattern instead of MVC
-- Twig implimentation for templating html
-- Example ViewModel classes
-- Example Gateway classes
-- Example Service classes
-- Example Service Providers
-- Example Adction classes
-- Example database seed classes
-- Environment variable loading
-- Flip Whoops for error handling
-- League Routing implimentation
-- PHP DI Container implimentation for dependancy injection
-- League config implimentation
-- Doctrine migrations implimentation for versioning your database
-- FakerPHP for use in seeds
+- ADR Design Pattern instead of MVC giving you greater control and organization
+- PSR-7 Requests & Responses using Laminas diactoros
+- Twig implementation for templating html
+- ViewModels using DTO package by Spatie
+- Repositories to communicate with your database
+- Services for your domain logic
+- Seeds using FakerPHP to create realistic data during development 
+- Migrations using doctrine DBAL to version your database
+- Environment variables using the popular DotEnv package
+- Flip Whoops package for error handling including a custom error handler for sentry
+- League Routing implementation
+- PHP DI Container implementation for dependancy injection
+- League config implementation
+- Session handling using Laminas Session package
+- User authentication Middleware
+- Basic Dashboard and login setup
+- Tailwind CSS for frontend
 
-All of this is fairly easy to rip out if you dont need it or change the design to suit your style
-or add new implimentations if you need more full featured things like queuing systems and so on.
+All of this is fairly easy to rip out if you don't need it or change the design to suit your style
+or add new implementations if you need more full featured things like queuing systems and so on.
