@@ -16,12 +16,6 @@ class AuthMiddleware implements MiddlewareInterface
         RequestHandlerInterface $handler
     ): ResponseInterface {
 
-//        $repo = Container::get(UserRepositoryInterface::class);
-//
-//        $data = $repo->findByEmail('test@test.com');
-//
-//        dd($data);
-
         return $handler->handle($request);
     }
 }
