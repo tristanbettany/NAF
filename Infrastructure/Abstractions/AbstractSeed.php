@@ -1,10 +1,10 @@
 <?php
 
-namespace Database\Seeds;
+namespace Infrastructure\Abstractions;
 
+use Doctrine\DBAL\Connection as DoctrineConnection;
 use Faker\Factory;
 use Faker\Generator;
-use Doctrine\DBAL\Connection as DoctrineConnection;
 
 abstract class AbstractSeed
 {

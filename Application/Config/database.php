@@ -1,5 +1,7 @@
 <?php
 
+use Database\Seeds\UserSeed;
+
 return [
     'connection' => [
         'host' => env('DB_HOST'),
@@ -15,5 +17,7 @@ return [
         ],
         'all_or_nothing' => true,
     ],
-    'seeds' => [],
+    'seeds' => [
+        UserSeed::class,
+    ],
 ];

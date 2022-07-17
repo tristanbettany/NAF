@@ -1,10 +1,11 @@
 <?php
 
-namespace Database\Gateways;
+namespace Infrastructure\Abstractions;
 
 use Doctrine\DBAL\Connection as DoctrineConnection;
+use Infrastructure\Interfaces\RepositoryInterface;
 
-abstract class AbstractGateway
+abstract class AbstractRepository implements RepositoryInterface
 {
     public function __construct(
         protected DoctrineConnection $connection
