@@ -26,13 +26,14 @@ final class AuthService implements AuthServiceInterface
             return false;
         }
 
-        $loggedIn = password_verify($password, $user['password_hash']);
+        $loggedIn = password_verify($password, $user->passwordHash);
         if ($loggedIn === false) {
             return false;
         }
 
         $this->session->set('auth', true);
-        $this->session->set('auth-uuid', $user['uuid']);
+        $this->session->set('auth-uuid', $user->uuid);
+        $this->session->set('auth-is-admin', $user->isAdmin);
 
         return true;
     }
@@ -41,6 +42,7 @@ final class AuthService implements AuthServiceInterface
     {
         $this->session->delete('auth');
         $this->session->delete('auth-uuid');
+        $this->session->delete('auth-is-admin');
     }
 
     public function check(): bool
@@ -68,7 +70,7 @@ final class AuthService implements AuthServiceInterface
     public static function validateNewPassword(
         string $password,
         string $passwordMatch
-    ) {
+    ): void {
         if ($password !== $passwordMatch) {
             throw new ValidationException('Your passwords do not match');
         }
