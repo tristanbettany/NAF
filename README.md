@@ -41,7 +41,7 @@ Point your web server to the index.php file in the Public folder, and you're rea
 - User authentication Middleware
 - Basic Dashboard and login setup
 - Tailwind CSS for frontend
-- No full fat ORM is used to improve speed, however there is a custom made hydration feature 
+- No full fat ORM is used to save performance being tanked, however there is a custom made hydration feature 
   to hydrate entities from data in the database (if you just want to return arrays from your repos you can, 
   hydration isnt forced on you)
 
