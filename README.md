@@ -41,6 +41,9 @@ Point your web server to the index.php file in the Public folder, and you're rea
 - User authentication Middleware
 - Basic Dashboard and login setup
 - Tailwind CSS for frontend
+- No full fat ORM is used to improve speed, however there is a custom made hydration feature 
+  to hydrate entities from data in the database (if you just want to return arrays from your repos you can, 
+  hydration isnt forced on you)
 
 All of this is fairly easy to rip out if you don't need it or change the design to suit your style
 or add new implementations if you need more full featured things like queuing systems and so on.
