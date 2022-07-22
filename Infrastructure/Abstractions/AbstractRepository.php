@@ -2,9 +2,11 @@
 
 namespace Infrastructure\Abstractions;
 
+use Application\Exceptions\NoDataToHydrateException;
+use Application\Exceptions\SelectBuildException;
+use Application\Exceptions\UnsetHydrationEntityException;
 use Doctrine\DBAL\Connection as DoctrineConnection;
 use Infrastructure\Interfaces\RepositoryInterface;
-use RuntimeException;
 use ReflectionClass;
 
 abstract class AbstractRepository implements RepositoryInterface
@@ -19,11 +21,15 @@ abstract class AbstractRepository implements RepositoryInterface
     }
 
     public function hydrate(
-        array $data = [],
+        array|bool $data = [],
         ?string $entityOverride = null,
     ): mixed {
+        if (is_bool($data) === true) {
+            throw new NoDataToHydrateException('No data to hydrate');
+        }
+
         if (empty($data) === true) {
-            throw new RuntimeException('No data to hydrate');
+            throw new NoDataToHydrateException('No data to hydrate');
         }
 
         if (empty($entityOverride) === false) {
@@ -57,7 +63,7 @@ abstract class AbstractRepository implements RepositoryInterface
             empty($this->entity) === true
             && empty($this->entityOverride) === true
         ) {
-            throw new RuntimeException('Entity not set in repository, and no override specified');
+            throw new UnsetHydrationEntityException('Entity not set in repository, and no override specified');
         }
 
         if (empty($this->entityOverride) === false) {
@@ -91,14 +97,27 @@ abstract class AbstractRepository implements RepositoryInterface
         $hydratedObject = new $class($properties);
 
         $reflectionClass = new ReflectionClass($class);
-        $properties = $reflectionClass->getProperties();
+        $reflectedProperties = $reflectionClass->getProperties();
 
-        foreach($properties as $property) {
+        foreach($reflectedProperties as $property) {
             $propertyType = $property->getType()->getName();
-            if (str_contains($propertyType, 'Database\\Entities')) {
+            if (str_contains($propertyType, 'Database\\Entities') === true) {
                 // This is an entity inside the entity we should probably hydrate that
-                $propertyName = $property->getName();
-                $hydratedObject->$propertyName = $this->hydrate($row, $propertyType);
+
+                $childDataToHydrate = [];
+                foreach ($row as $propKey => $propVal) {
+                    // before hydrating it make sure we have the data to do so
+                    // which should be signified by an alias followed by a period
+
+                    if (str_contains($propKey, $propertyType::ALIAS . '.') === true) {
+                        $childDataToHydrate[str_replace($class::ALIAS . '.', '', $propKey)] = $propVal;
+                    }
+                }
+
+                if (empty($childDataToHydrate) === false) {
+                    $propertyName = $property->getName();
+                    $hydratedObject->$propertyName = $this->hydrate($childDataToHydrate, $propertyType);
+                }
             }
         }
 
@@ -124,7 +143,7 @@ abstract class AbstractRepository implements RepositoryInterface
         array $entities = []
     ): string {
         if (empty($entities) === true) {
-            throw new RuntimeException('Unable to build select, no entities defined');
+            throw new SelectBuildException('Unable to build select, no entities defined');
         }
 
         $columns = [];
@@ -138,7 +157,7 @@ abstract class AbstractRepository implements RepositoryInterface
         array_walk($columns, function (&$val, $key) {
             $val = $key . ' AS ' . $val;
         });
-
+        
         return implode(",\n", $columns);
     }
 

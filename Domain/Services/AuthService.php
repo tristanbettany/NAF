@@ -3,6 +3,7 @@
 namespace Domain\Services;
 
 use Application\Exceptions\ValidationException;
+use Database\Entities\UserEntity;
 use Database\Interfaces\UserRepositoryInterface;
 use Domain\Interfaces\AuthServiceInterface;
 use Domain\Interfaces\SessionInterface;
@@ -56,7 +57,7 @@ final class AuthService implements AuthServiceInterface
         return false;
     }
 
-    public function user(): ?array
+    public function user(): ?UserEntity
     {
         if ($this->check() === true) {
             $userUUID = $this->session->get('auth-uuid');
