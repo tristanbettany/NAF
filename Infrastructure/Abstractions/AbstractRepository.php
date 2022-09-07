@@ -8,12 +8,12 @@ use Application\Exceptions\UnsetHydrationEntityException;
 use Doctrine\DBAL\Connection as DoctrineConnection;
 use Infrastructure\Interfaces\RepositoryInterface;
 use ReflectionClass;
+use DateTime;
 
 abstract class AbstractRepository implements RepositoryInterface
 {
     protected string $entity = '';
-
-    private ?string $entityOverride = null;
+    private bool $debug = false;
 
     public function __construct(
         protected DoctrineConnection $connection
@@ -23,7 +23,11 @@ abstract class AbstractRepository implements RepositoryInterface
     public function hydrate(
         array|bool $data = [],
         ?string $entityOverride = null,
+        bool $jsonDecodeArrays = false,
+        bool $debug = false
     ): mixed {
+        $this->debug = $debug;
+
         if (is_bool($data) === true) {
             throw new NoDataToHydrateException('No data to hydrate');
         }
@@ -32,49 +36,52 @@ abstract class AbstractRepository implements RepositoryInterface
             throw new NoDataToHydrateException('No data to hydrate');
         }
 
+        if (
+            empty($this->entity) === true
+            && empty($entityOverride) === true
+        ) {
+            throw new UnsetHydrationEntityException('Entity not set in repository, and no override specified');
+        }
+
         if (empty($entityOverride) === false) {
-            $this->entityOverride = $entityOverride;
+            $class = $entityOverride;
+        } else {
+            $class = $this->entity;
         }
 
         if (isset($data[0]) === true) {
             // probably multiple rows have been given
             // maybe just 1 in that format
-            return $this->hydrateMultipleRows($data);
+            return $this->hydrateMultipleRows($data, $jsonDecodeArrays, $class);
         } else {
             // Most likley just 1 row
-            return $this->hydrateSingleRow($data);
+            return $this->hydrateSingleRow($data, $jsonDecodeArrays, $class);
         }
     }
 
-    private function hydrateMultipleRows(array $rows): array
-    {
+    private function hydrateMultipleRows(
+        array $rows,
+        bool $jsonDecodeArrays = false,
+        mixed $class
+    ): array {
         $entities = [];
 
         foreach ($rows as $row) {
-            $entities[] = $this->hydrateSingleRow($row);
+            $entities[] = $this->hydrateSingleRow($row, $jsonDecodeArrays, $class);
         }
 
         return $entities;
     }
 
-    private function hydrateSingleRow(array $row): ?AbstractEntity
-    {
-        if (
-            empty($this->entity) === true
-            && empty($this->entityOverride) === true
-        ) {
-            throw new UnsetHydrationEntityException('Entity not set in repository, and no override specified');
-        }
-
-        if (empty($this->entityOverride) === false) {
-            $class = $this->entityOverride;
-        } else {
-            $class = $this->entity;
-        }
-
+    private function hydrateSingleRow(
+        array $row,
+        bool $jsonDecodeArrays = false,
+        mixed $class
+    ): ?AbstractEntity {
         $properties = [];
         foreach ($row as $key => $val) {
             $shouldAddProperty = false;
+
             if (str_contains($key, $class::ALIAS . '.') === true) {
                 $key = str_replace($class::ALIAS . '.', '', $key);
                 $shouldAddProperty = true;
@@ -94,11 +101,37 @@ abstract class AbstractRepository implements RepositoryInterface
             return null;
         }
 
-        $hydratedObject = new $class($properties);
+        if (array_key_exists('createdAt', $properties) === true) {
+            $properties['createdAt'] = new DateTime($properties['createdAt']);
+        }
+
+        if (array_key_exists('updatedAt', $properties) === true) {
+            $properties['updatedAt'] = new DateTime($properties['updatedAt']);
+        }
 
         $reflectionClass = new ReflectionClass($class);
         $reflectedProperties = $reflectionClass->getProperties();
 
+        // Manipulate certain field types before creation
+        foreach($reflectedProperties as $property) {
+            if (
+                $property->getName() === 'exceptKeys'
+                || $property->getName() === 'onlyKeys'
+            ) {
+                continue;
+            }
+
+            $propertyType = $property->getType()->getName();
+            if ($propertyType === 'array') {
+                if ($jsonDecodeArrays === true) {
+                    $properties[$property->getName()] = json_decode($properties[$property->getName()], true);
+                }
+            }
+        }
+
+        $hydratedObject = new $class($properties);
+
+        // Hydrate Child Objects
         foreach($reflectedProperties as $property) {
             $propertyType = $property->getType()->getName();
             if (str_contains($propertyType, 'Database\\Entities') === true) {
@@ -140,7 +173,8 @@ abstract class AbstractRepository implements RepositoryInterface
     }
 
     protected function buildSelectFromEntities(
-        array $entities = []
+        array $entities = [],
+        bool $stripArrays = true
     ): string {
         if (empty($entities) === true) {
             throw new SelectBuildException('Unable to build select, no entities defined');
@@ -150,7 +184,7 @@ abstract class AbstractRepository implements RepositoryInterface
         foreach ($entities as $entity => $alias) {
             $columns = array_merge(
                 $columns,
-                $this->convertEntityVariableNamesToDatabaseColumnNames($entity, $alias),
+                $this->convertEntityVariableNamesToDatabaseColumnNames($entity, $alias, $stripArrays),
             );
         }
 
@@ -163,7 +197,8 @@ abstract class AbstractRepository implements RepositoryInterface
 
     private function convertEntityVariableNamesToDatabaseColumnNames(
         string $entity,
-        ?string $tableAlias = null
+        ?string $tableAlias = null,
+        bool $stripArrays = true
     ): array {
         $columnAliasPairs = [];
 
@@ -174,6 +209,12 @@ abstract class AbstractRepository implements RepositoryInterface
 
         foreach($properties as $property) {
             if (str_contains($property->getType()->getName(), 'Database\\Entities')) {
+                unset($entityVars[$property->getName()]);
+            }
+            if (
+                str_contains($property->getType()->getName(), 'array')
+                && $stripArrays === true
+            ) {
                 unset($entityVars[$property->getName()]);
             }
         }
