@@ -52,22 +52,22 @@ abstract class AbstractRepository implements RepositoryInterface
         if (isset($data[0]) === true) {
             // probably multiple rows have been given
             // maybe just 1 in that format
-            return $this->hydrateMultipleRows($data, $jsonDecodeArrays, $class);
+            return $this->hydrateMultipleRows($data, $class, $jsonDecodeArrays);
         } else {
             // Most likley just 1 row
-            return $this->hydrateSingleRow($data, $jsonDecodeArrays, $class);
+            return $this->hydrateSingleRow($data, $class, $jsonDecodeArrays);
         }
     }
 
     private function hydrateMultipleRows(
         array $rows,
+        mixed $class,
         bool $jsonDecodeArrays = false,
-        mixed $class
     ): array {
         $entities = [];
 
         foreach ($rows as $row) {
-            $entities[] = $this->hydrateSingleRow($row, $jsonDecodeArrays, $class);
+            $entities[] = $this->hydrateSingleRow($row, $class, $jsonDecodeArrays);
         }
 
         return $entities;
@@ -75,8 +75,8 @@ abstract class AbstractRepository implements RepositoryInterface
 
     private function hydrateSingleRow(
         array $row,
+        mixed $class,
         bool $jsonDecodeArrays = false,
-        mixed $class
     ): ?AbstractEntity {
         $properties = [];
         foreach ($row as $key => $val) {
@@ -102,11 +102,27 @@ abstract class AbstractRepository implements RepositoryInterface
         }
 
         if (array_key_exists('createdAt', $properties) === true) {
-            $properties['createdAt'] = new DateTime($properties['createdAt']);
+            if (empty($properties['createdAt']) === false) {
+                $properties['createdAt'] = new DateTime($properties['createdAt']);
+            } else {
+                $properties['createdAt'] = null;
+            }
         }
 
         if (array_key_exists('updatedAt', $properties) === true) {
-            $properties['updatedAt'] = new DateTime($properties['updatedAt']);
+            if (empty($properties['updatedAt']) === false) {
+                $properties['updatedAt'] = new DateTime($properties['updatedAt']);
+            } else {
+                $properties['updatedAt'] = null;
+            }
+        }
+
+        if (array_key_exists('lastChargedAt', $properties) === true) {
+            if (empty($properties['lastChargedAt']) === false) {
+                $properties['lastChargedAt'] = new DateTime($properties['lastChargedAt']);
+            } else {
+                $properties['lastChargedAt'] = null;
+            }
         }
 
         $reflectionClass = new ReflectionClass($class);
@@ -147,7 +163,10 @@ abstract class AbstractRepository implements RepositoryInterface
                     }
                 }
 
-                if (empty($childDataToHydrate) === false) {
+                if (
+                    empty($childDataToHydrate) === false
+                    && empty(reset($childDataToHydrate)) === false
+                ) {
                     $propertyName = $property->getName();
                     $hydratedObject->$propertyName = $this->hydrate($childDataToHydrate, $propertyType);
                 }
