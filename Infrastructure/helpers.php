@@ -20,11 +20,15 @@ if(function_exists('vd') === false) {
 
 if(function_exists('env') === false) {
     function env(string $key) {
-        if (isset($_ENV[$key]) === false) {
+        $systemEnv = getenv($key);
+        if (
+            isset($_ENV[$key]) === false
+            && empty($systemEnv) === true
+        ) {
             return null;
         }
 
-        $value = $_ENV[$key];
+        $value = $_ENV[$key] ?? $systemEnv;
 
         if (is_numeric($value) === true) {
             return (int) $value;
