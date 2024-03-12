@@ -14,13 +14,17 @@ final class UserSeed extends AbstractSeed implements SeedInterface
         $this->connection->createQueryBuilder()
             ->insert('users')
             ->setValue('uuid', '?')
-            ->setValue('name', '?')
+            ->setValue('first_name', '?')
+            ->setValue('last_name', '?')
             ->setValue('email', '?')
             ->setValue('password_hash', '?')
+            ->setValue('is_admin', '?')
             ->setParameter('0', Uuid::uuid4()->toString())
-            ->setParameter('1', 'Test User')
-            ->setParameter('2', 'test@test.com')
-            ->setParameter('3', Auth::hashPassword('letmein'))
+            ->setParameter('1', 'Test')
+            ->setParameter('2', 'Admin')
+            ->setParameter('3', 'test@test.com')
+            ->setParameter('4', Auth::hashPassword('letmein'))
+            ->setParameter('5', true)
             ->executeQuery();
     }
 }
